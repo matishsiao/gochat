@@ -77,6 +77,9 @@ Chat = function(container,user) {
   }
 
   Chat.prototype.RenderMessage = function(msg) {
+    if(msg.message.indexOf("<script>") != -1 || msg.message.indexOf("</script>") != -1){
+      msg.message = "XSS Injection. Auto block by goChat.";
+    }
     msg_ctx = '<div class="message">'+
                '<div class="message_title" style="'+((msg.user == self.user)?"background-color: #b0ff7b;":"background-color: #c6f104;")+'"><b>'+msg.user+'</b>:<label>';
                today = DateConverter(new Date().getTime());
