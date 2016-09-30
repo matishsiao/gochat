@@ -1,0 +1,11 @@
+{
+  "debug":false,
+  "http":"127.0.0.1:8080",
+  "https":"127.0.0.1:4443",
+  "ssl":{
+    "key":"",
+    "crt":""
+  },
+  "timeout":120,
+  "connection_limit":100
+}

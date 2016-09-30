@@ -1,0 +1,61 @@
+.messagebox {
+  border-radius: 4px;
+  border: 2px solid #73AD21;
+  padding: 4px;
+  min-width: 220px;
+  height: 300px;
+  position: fixed;
+}
+
+.message_ctx {
+  height: 232px;
+  width: 220px;
+  padding: 2px;
+}
+
+.message {
+  font-size: 12px;
+}
+.hr_line {
+  color: #73ad21;
+  margin: 2px;
+}
+
+.message_setting {
+  background-color: #73ad21;
+  padding: 4px;
+  height: 12px;
+  margin: 2px;
+  border: 1px solid;
+}
+
+.message_setting button {
+  margin-top: -4px;
+  float: right;
+}
+
+.message_title {
+  background-color: #f1943a;
+  padding: 4px;
+  height: 12px;
+}
+
+.message_title label {
+  font-size: 8px;
+  float: right;
+}
+.message_content {
+  font-size: 8px;
+  padding: 4px;
+  height: 12px;
+}
+
+.inputbox {
+  font-size: 12px;
+  padding: 4px;
+}
+
+.inputbox input {
+  width:164px;
+  margin-right: 4px;
+}
