@@ -5,7 +5,7 @@
 # Version: 0.0.1
 
 # Features
-  
+
   Public channel chat
 
 ## Todo
@@ -13,24 +13,24 @@
   Private channel chat
 
   Administrator support
-  
-  
+
+
 # Screenshot
-  
+
   Chat box
-  
+
   ![Chat Box](https://github.com/matishsiao/gochat/blob/master/images/chatbox.png)
-  
+
   Send Message
-  
+
   ![Send Message](https://github.com/matishsiao/gochat/blob/master/images/sendmessage.png)
-  
+
   Minimize chat box
-  
+
   ![Chat Box Minimize](https://github.com/matishsiao/gochat/blob/master/images/minimize.png)
-  
+
   Send chinese words to chat box
-  
+
   ![Chat Box for Chinese](https://github.com/matishsiao/gochat/blob/master/images/chat.png)
 
 # Example
@@ -40,7 +40,7 @@
     <body>
       <div id="message_box"></div>
     </body>
-    <script src="static/js/ws.js"></script>
+    <script src="static/js/chat.js"></script>
     <script src="static/js/util.js"></script>
     <script>
       var chat = new Chat("message_box","username");
@@ -73,6 +73,3 @@
   }
 
   ```
-  
-  
-  
