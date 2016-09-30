@@ -2,6 +2,19 @@
 
   GoChat is simplify web socket chat server with client.
 
+# Version: 0.0.1
+
+# Features
+  
+  Public channel chat
+
+## Todo
+
+  Private channel chat
+
+  Administrator support
+  
+  
 # Screenshot
   
   Chat box
