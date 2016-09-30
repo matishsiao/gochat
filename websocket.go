@@ -16,10 +16,11 @@ import (
 var clientList *list.List
 
 type WsClient struct {
-	UId     string
-	Channel []string
-	WS      *websocket.Conn
-	Closed  bool
+	UId      string
+	UserName string
+	Channel  []string
+	WS       *websocket.Conn
+	Closed   bool
 }
 
 func (wc *WsClient) Close() {
@@ -42,6 +43,13 @@ func Echo(ws *websocket.Conn) {
 		var reply string
 		if err = websocket.Message.Receive(ws, &reply); err != nil {
 			log.Println("Can't receive:" + err.Error())
+			var leaveMsg ChatMessage
+			leaveMsg.Channel = "Public"
+			leaveMsg.Timestamp = time.Now().Unix() * 1000
+			leaveMsg.Message = fmt.Sprintf("%s logout GoChat.", client.UserName)
+			leaveMsg.User = "GoChat Service"
+			leaveMsg.Type = "system"
+			broadcast(client.UId, leaveMsg)
 			break
 		}
 		var msg ChatMessage
@@ -67,6 +75,7 @@ func Echo(ws *websocket.Conn) {
 			switch msg.Type {
 			case "login":
 				//Send Login Message
+				client.UserName = msg.User
 				var welcomeMsg ChatMessage
 				welcomeMsg.Channel = "Public"
 				welcomeMsg.Timestamp = time.Now().Unix() * 1000
