@@ -1,7 +1,25 @@
 # gochat
 
   GoChat is simplify web socket chat server with client.
+
+# Screenshot
   
+  Chat box
+  
+  ![Chat Box](https://github.com/matishsiao/gochat/blob/master/images/chatbox.png)
+  
+  Send Message
+  
+  ![Send Message](https://github.com/matishsiao/gochat/blob/master/images/sendmessage.png)
+  
+  Minimize chat box
+  
+  ![Chat Box Minimize](https://github.com/matishsiao/gochat/blob/master/images/minimize.png)
+  
+  Send chinese words to chat box
+  
+  ![Chat Box for Chinese](https://github.com/matishsiao/gochat/blob/master/images/chat.png)
+
 # Example
   ```
   <html>
