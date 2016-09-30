@@ -247,18 +247,31 @@ function convetNumToString(num){
 			}
 
 function timeConverter(UNIX_timestamp){
- var a = new Date(UNIX_timestamp);
- var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
- var months = ['1','2','3','4','5','6','7','8','9','10','11','12'];
-     var year = a.getFullYear();
-     var month = months[a.getMonth()];
-     var date = a.getDate();
-     var hour = a.getHours();
-     hour = (hour < 10)?"0"+hour:hour;
-     var min = a.getMinutes();
-     min = (min < 10)?"0"+min:min;
-     var sec = a.getSeconds();
-     sec = (sec < 10)?"0"+sec:sec;
-     var time = year+'-'+month+'-'+date+' '+hour+':'+min+':'+sec ;
-     return time;
+	var a = new Date(UNIX_timestamp);
+ 	var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+ 	var months = ['01','02','03','04','05','06','07','08','09','10','11','12'];
+ 	var year = a.getFullYear();
+ 	var month = months[a.getMonth()];
+  var date = a.getDate();
+	date = (date < 10)?"0"+date:date;
+  var hour = a.getHours();
+  hour = (hour < 10)?"0"+hour:hour;
+  var min = a.getMinutes();
+  min = (min < 10)?"0"+min:min;
+  var sec = a.getSeconds();
+  sec = (sec < 10)?"0"+sec:sec;
+  var time = year+'-'+month+'-'+date+' '+hour+':'+min+':'+sec ;
+  return time;
  }
+
+function DateConverter(UNIX_timestamp){
+	var a = new Date(UNIX_timestamp);
+  var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var months = ['01','02','03','04','05','06','07','08','09','10','11','12'];
+  var year = a.getFullYear();
+  var month = months[a.getMonth()];
+  var date = a.getDate();
+  date = (date < 10)?"0"+date:date;
+  var time = year+'-'+month+'-'+date;
+  return time;
+}

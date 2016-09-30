@@ -78,8 +78,10 @@ Chat = function(container,user) {
 
   Chat.prototype.RenderMessage = function(msg) {
     msg_ctx = '<div class="message">'+
-               '<div class="message_title" style="'+((msg.user == self.user)?"background-color: #b0ff7b;":"background-color: #c6f104;")+'"><b>'+msg.user+'</b>:<label>'+
-               timeConverter(msg.timestamp)+'</label></div>'+
+               '<div class="message_title" style="'+((msg.user == self.user)?"background-color: #b0ff7b;":"background-color: #c6f104;")+'"><b>'+msg.user+'</b>:<label>';
+               today = DateConverter(new Date().getTime());
+               msgDay = DateConverter(msg.timestamp);
+    msg_ctx += ((today == msgDay)?"today":timeConverter(msg.timestamp))+'</label></div>'+
                '<div class="message_content"><b>'+msg.message+'</div></div>';
     return msg_ctx;
   }
