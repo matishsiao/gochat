@@ -32,7 +32,7 @@ Chat = function(container,user) {
     self.BoardRender();
   }
   Chat.prototype.BoardRender = function() {
-    msgbox.innerHTML = '<div id="message_setting" class="message_setting">'+
+    msgbox.innerHTML = '<div id="message_setting" class="message_setting"><label>'+self.user+'</label>'+
     '<button id="switch_btn"> '+((self.hidden)?"+":"-")+' </button>'+
     '</div>';
     if(!self.hidden){
