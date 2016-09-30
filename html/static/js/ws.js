@@ -72,6 +72,7 @@ Chat = function(container,user) {
       }
       var msg_ctx_box = document.getElementById('message_ctx');
       msg_ctx_box.innerHTML = msg_ctx;
+      msg_ctx_box.scrollTop = msg_ctx_box.scrollHeight
     }
   }
 
@@ -79,7 +80,7 @@ Chat = function(container,user) {
     msg_ctx = '<div class="message">'+
                '<div class="message_title" style="'+((msg.user == self.user)?"background-color: #b0ff7b;":"background-color: #c6f104;")+'"><b>'+msg.user+'</b>:<label>'+
                timeConverter(msg.timestamp)+'</label></div>'+
-               '<div class="message_content"><b>'+msg.message+'</div>';
+               '<div class="message_content"><b>'+msg.message+'</div></div>';
     return msg_ctx;
   }
 

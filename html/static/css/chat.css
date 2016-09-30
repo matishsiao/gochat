@@ -11,10 +11,14 @@
   height: 232px;
   width: 220px;
   padding: 2px;
+  overflow: auto;
 }
 
 .message {
   font-size: 12px;
+  border-radius: 2px;
+  border: 1px solid #f1943a;
+  margin-top:1px;
 }
 .hr_line {
   color: #73ad21;
