@@ -11,3 +11,12 @@ type Configs struct {
 	Timeout         int64 `json:"timeout"`
 	ConnectionLimit int   `json:"connection_limit"`
 }
+
+type ChatMessage struct {
+	User      string `json:"user"`
+	Timestamp int64  `json:"timestamp"`
+	Message   string `json:"message"`
+	Type      string `json:"type"`
+	Channel   string `json:"channel"`
+	Token     string `json:"token"`
+}

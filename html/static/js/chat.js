@@ -15,6 +15,7 @@ Chat = function(container,user) {
   Chat.prototype.CreateMessage = function(channel,message) {
       var msg = {
         user: self.user,
+        type:"message",
         timestamp: new Date().getTime(),
         channel:channel,
         message:message
@@ -28,10 +29,6 @@ Chat = function(container,user) {
   }
 
   Chat.prototype.Init = function() {
-    var welcomeMsg = self.CreateMessage("Global","Welcome to GoChat");
-    welcomeMsg.user = "System";
-    message_store.push(welcomeMsg);
-
     self.BoardRender();
   }
   Chat.prototype.BoardRender = function() {
@@ -90,7 +87,6 @@ Chat = function(container,user) {
   }
 
   Chat.prototype.Connect = function(url) {
-    console.log(url);
     self.ws = new WebSocket(url);
     self.ws.onopen = self.onOpen;
     self.ws.onmessage = self.onMessage;
@@ -99,6 +95,11 @@ Chat = function(container,user) {
   }
   Chat.prototype.onOpen = function(event) {
     console.log("onOpen:",event);
+    if(self.ws != null && self.ws.readyState == self.ws.OPEN) {
+      var msg = self.CreateMessage(self.channel, "login");
+      msg.type = "login";
+      self.ws.send(JSON.stringify(msg));
+    }
   }
   Chat.prototype.onMessage = function(event) {
     console.log("onMessage:",event);
@@ -112,6 +113,11 @@ Chat = function(container,user) {
   }
   Chat.prototype.onClose = function(event) {
     console.log("onClose:",event);
+    var msg = self.CreateMessage("Public","GoChat Service has shutdown. Please refresh page.");
+    msg.user = "GoChat Service";
+    message_store.push(msg);
+    self.BoardRender();
+
   }
   Chat.prototype.onError = function(event) {
     console.log("onError:",event);
