@@ -49,7 +49,7 @@ func Echo(ws *websocket.Conn) {
 			leaveMsg.Message = fmt.Sprintf("%s logout GoChat.", client.UserName)
 			leaveMsg.User = "GoChat Service"
 			leaveMsg.Type = "system"
-			broadcast(client.UId, leaveMsg)
+			processMessage(client, leaveMsg)
 			break
 		}
 		var msg ChatMessage
@@ -92,9 +92,11 @@ func Echo(ws *websocket.Conn) {
 				welcomeMsg.Message = fmt.Sprintf("<b>%s</b> login GoChat.", msg.User)
 				welcomeMsg.User = "GoChat Service"
 				welcomeMsg.Type = "system"
-				broadcast(client.UId, welcomeMsg)
+				processMessage(client, welcomeMsg)
 			case "message":
-				broadcast(client.UId, msg)
+				processMessage(client, msg)
+			case "command":
+				processCommand(client, msg)
 			}
 
 		}
@@ -104,12 +106,52 @@ func Echo(ws *websocket.Conn) {
 	}
 }
 
+func processMessage(client *WsClient, msg ChatMessage) {
+	switch CONFIGS.Mode {
+	case "chat":
+		broadcast(client.UId, msg)
+	}
+}
+
+func processCommand(client *WsClient, msg ChatMessage) {
+	var cmdMsg ChatMessage
+	cmdMsg.Channel = "System"
+	cmdMsg.Timestamp = time.Now().Unix() * 1000
+
+	cmdMsg.User = "GoChat Service"
+	cmdMsg.Type = "system"
+	process := false
+	//verify admin token
+	if msg.Token == CONFIGS.AuthToken {
+		process = true
+	} else {
+		cmdMsg.Message = "Your token incorrect."
+	}
+
+	if process {
+		switch msg.Data.Command {
+		case "list":
+			cmdMsg.Message = "<p>User list</p>"
+			for e := clientList.Front(); e != nil; e = e.Next() {
+				if e.Value.(*WsClient).UId != client.UId {
+					cmdMsg.Message += fmt.Sprintf("<b>%s</b> online</br>", e.Value.(*WsClient).UserName)
+				}
+			}
+		}
+	}
+
+	if cmdMsg.Message != "" {
+		msg_str, _ := json.Marshal(cmdMsg)
+		if string(msg_str) != "" {
+			websocket.Message.Send(client.WS, string(msg_str))
+		}
+	}
+}
+
 func broadcast(uid string, msg ChatMessage) {
 	var err error
-	//fmt.Println("WsServer broadcast:" + msg)
 	msg_str, _ := json.Marshal(msg)
 	for e := clientList.Front(); e != nil; e = e.Next() {
-		//fmt.Println(e.Value.(*WsClient).UId + " now:" + uid + "\n")
 		if e.Value.(*WsClient).UId != uid {
 			find := false
 			for _, v := range e.Value.(*WsClient).Channel {
@@ -120,10 +162,9 @@ func broadcast(uid string, msg ChatMessage) {
 			}
 			if find {
 				if err = websocket.Message.Send(e.Value.(*WsClient).WS, string(msg_str)); err != nil {
-					fmt.Printf("WsSokect error:%s\n", err.Error())
+					log.Printf("WsSokect error:%s\n", err.Error())
 				}
 			}
-
 		}
 	}
 }

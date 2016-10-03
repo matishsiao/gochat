@@ -1,0 +1,12 @@
+<html>
+  <link href="static/css/chat.css" rel="stylesheet">
+<body>
+  <div id="message_box"></div>
+</body>
+<script src="static/js/chat.js"></script>
+<script src="static/js/util.js"></script>
+<script>
+  var chat = new Chat("message_box","Admin","admintoken");
+  chat.Connect("ws://127.0.0.1:8080/socket");
+</script>
+</html>

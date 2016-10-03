@@ -1,9 +1,10 @@
-Chat = function(container,user) {
+Chat = function(container,user,token) {
   var message_store = [];
   var self = this;
   self.ws = null;
   self.hidden = false;
   self.user = user;
+  self.token = token;
   self.channel = "Public";
   var msgbox = document.getElementById(container);
   if(msgbox == null){
@@ -18,7 +19,9 @@ Chat = function(container,user) {
         type:"message",
         timestamp: new Date().getTime(),
         channel:channel,
-        message:message
+        message:message,
+        token:self.token,
+        data:{}
       };
       return msg;
   }
@@ -47,7 +50,15 @@ Chat = function(container,user) {
     document.getElementById("switch_btn").addEventListener("click", self.SwitchWindow);
     msgbox.style.top = window.innerHeight - msgbox.offsetHeight - 4 + 'px';
     msgbox.style.left = window.innerWidth - msgbox.offsetWidth - 4 + 'px';
-    window.onresize = self.BoardRender;
+    var oldresize = window.onresize;
+    if (typeof oldresize !== 'function') {
+        window.onload = self.BoardRender;
+    } else {
+        window.onresize = function() {
+            oldresize();
+            self.BoardRender;
+        }
+    }
     self.Render();
   }
 
@@ -141,25 +152,29 @@ Chat = function(container,user) {
     console.log("Send",self.channel);
     var msg = self.CreateMessage(self.channel, message);
     if(self.ws != null && self.ws.readyState == self.ws.OPEN) {
-      self.ws.send(JSON.stringify(msg));
+      var send = true;
+      if(msg.message.substr(0,1)=="/"){
+        data = msg.message.substr(1).split(" ");
+        console.log(data);
+        if(data.length > 0 && data[0] != ""){
+          msg.type = "command";
+          msg.data = {
+            command:data[0],
+            args:data
+          }
+        } else {
+          send = false;
+          msg = self.CreateMessage(self.channel,"message can't send. reason:command format incorrect.");
+        }
+      }
+      if(send)
+        self.ws.send(JSON.stringify(msg));
     } else {
       msg = self.CreateMessage(self.channel,"message can't send. reason:no connection can used.");
     }
     document.getElementById('send_box').value = "";
     self.Add(msg);
   }
-
-  Chat.prototype.MessageEncoder = function(channel,message) {
-      var msg = {
-        user: self.user,
-        timestamp: new Date().getTime(),
-        channel:channel,
-        message:message
-      };
-      return JSON.stringify(msg);
-  }
-
-
 
   Chat.prototype.Status = function() {
     switch(self.ws.readyState){
