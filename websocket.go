@@ -137,6 +137,11 @@ func processCommand(client *WsClient, msg ChatMessage) {
 					cmdMsg.Message += fmt.Sprintf("<b>%s</b> online</br>", e.Value.(*WsClient).UserName)
 				}
 			}
+		case "?":
+			cmdMsg.Message = `
+				<label>Command List</label></br>
+				<b>/list</b>: get online user list
+			`
 		}
 	}
 
