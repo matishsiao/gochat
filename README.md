@@ -7,13 +7,12 @@
 # Features
 
   Public channel chat
+  
+  Administrator support
 
 ## Todo
 
   Private channel chat
-
-  Administrator support
-
 
 # Screenshot
 
@@ -34,6 +33,9 @@
   ![Chat Box for Chinese](https://github.com/matishsiao/gochat/blob/master/images/chat.png)
 
 # Example
+
+  Normal User
+
   ```
   <html>
     <link href="static/css/chat.css" rel="stylesheet">
@@ -48,6 +50,23 @@
     </script>
   </html>
   ```
+  
+  Administrator
+  
+  ```
+  <html>
+    <link href="static/css/chat.css" rel="stylesheet">
+    <body>
+      <div id="message_box"></div>
+    </body>
+    <script src="static/js/chat.js"></script>
+    <script src="static/js/util.js"></script>
+    <script>
+      var chat = new Chat("message_box","username","authtoken");
+      chat.Connect("ws://127.0.0.1:8080/socket");
+    </script>
+  </html>
+  ```
 # Build
   ```
   go get https://github.com/matishsiao/gochat/
@@ -58,10 +77,27 @@
   ```
   ./gochat
   ```
+  
+  Browser
+  
+    Normal User
+    
+    ```
+      http://127.0.0.1:8080/
+    ```
+    
+    Administrator
+    
+    ```
+      http://127.0.0.1:8080/admin.html
+    ```
+    
 # Configuration
   ```
   {
     "debug":false,
+    "mode":"chat", // gochat mode: chat(public chat), TODO:service(for customer service)
+    "authtoken":"authtoken", // Administrator authorization token
     "http":"127.0.0.1:8080", // http listen host with port
     "https":"127.0.0.1:4443",// https listen host with port
     "ssl":{ //https ssl key and crt file settting
