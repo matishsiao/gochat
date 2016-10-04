@@ -125,23 +125,40 @@ func processCommand(client *WsClient, msg ChatMessage) {
 	if msg.Token == CONFIGS.AuthToken {
 		process = true
 	} else {
-		cmdMsg.Message = "Your token incorrect."
+		cmdMsg.Message = "This coommand is Administrator only."
 	}
 
-	if process {
-		switch msg.Data.Command {
-		case "list":
-			cmdMsg.Message = "<p>User list</p>"
-			for e := clientList.Front(); e != nil; e = e.Next() {
-				if e.Value.(*WsClient).UId != client.UId {
-					cmdMsg.Message += fmt.Sprintf("<b>%s</b> online</br>", e.Value.(*WsClient).UserName)
-				}
+	switch msg.Data.Command {
+	case "list":
+		cmdMsg.Message = "<p>User list</p>"
+		for e := clientList.Front(); e != nil; e = e.Next() {
+			if e.Value.(*WsClient).UId != client.UId {
+				channellist, _ := json.Marshal(e.Value.(*WsClient).Channel)
+				cmdMsg.Message += fmt.Sprintf("<b>%s</b> in Channel:%s</br>", e.Value.(*WsClient).UserName, channellist)
 			}
-		case "?":
-			cmdMsg.Message = `
+		}
+	case "?":
+		cmdMsg.Message = `
 				<label>Command List</label></br>
 				<b>/list</b>: get online user list
 			`
+	case "kick":
+		if process {
+			if len(msg.Data.Args) == 2 {
+				for e := clientList.Front(); e != nil; e = e.Next() {
+					if e.Value.(*WsClient).UserName == msg.Data.Args[1] {
+						kickErr := e.Value.(*WsClient).WS.Close()
+						if kickErr == nil {
+							cmdMsg.Message = fmt.Sprintf("<b>%s</b> has kicked.</br>", e.Value.(*WsClient).UserName)
+						} else {
+							cmdMsg.Message = fmt.Sprintf("<b>%s</b> has kick failed. Reason:%v</br>", e.Value.(*WsClient).UserName, kickErr)
+						}
+						break
+					}
+				}
+			} else {
+				cmdMsg.Message = "Args has empty."
+			}
 		}
 	}
 
