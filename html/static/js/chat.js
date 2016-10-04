@@ -34,6 +34,16 @@ Chat = function(container,user,token) {
   }
 
   Chat.prototype.Init = function() {
+    var oldresize = window.onresize;
+    console.log(oldresize);
+    if (typeof oldresize !== 'function' || oldresize == null) {
+        window.onresize = self.BoardRender;
+    } else {
+        window.onresize = function() {
+            oldresize();
+            self.BoardRender;
+        }
+    }
     self.BoardRender();
   }
   Chat.prototype.BoardRender = function() {
@@ -52,15 +62,7 @@ Chat = function(container,user,token) {
     document.getElementById("switch_btn").addEventListener("click", self.SwitchWindow);
     msgbox.style.top = window.innerHeight - msgbox.offsetHeight - 4 + 'px';
     msgbox.style.left = window.innerWidth - msgbox.offsetWidth - 4 + 'px';
-    var oldresize = window.onresize;
-    if (typeof oldresize !== 'function') {
-        window.onload = self.BoardRender;
-    } else {
-        window.onresize = function() {
-            oldresize();
-            self.BoardRender;
-        }
-    }
+
     self.Render();
   }
 
