@@ -94,6 +94,8 @@ func Echo(ws *websocket.Conn) {
 				welcomeMsg.Message = fmt.Sprintf("<b>%s</b> login GoChat.", msg.User)
 				welcomeMsg.User = "GoChat Service"
 				welcomeMsg.Type = "system"
+				welcomeMsg.Data.Command = ""
+				welcomeMsg.Data.Args = []string{}
 				processMessage(client, welcomeMsg)
 			case "message":
 				processMessage(client, msg)
