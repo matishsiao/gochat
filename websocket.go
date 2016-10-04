@@ -81,7 +81,9 @@ func Echo(ws *websocket.Conn) {
 				welcomeMsg.Timestamp = time.Now().Unix() * 1000
 				welcomeMsg.Message = "Welcome to GoChat."
 				welcomeMsg.User = "GoChat Service"
-				welcomeMsg.Type = "system"
+				welcomeMsg.Type = "login"
+				welcomeMsg.Data.Command = "login"
+				welcomeMsg.Data.Args = append(welcomeMsg.Data.Args, encodeString(msg.User, 0))
 				msg_str, _ := json.Marshal(welcomeMsg)
 				if string(msg_str) != "" {
 					websocket.Message.Send(ws, string(msg_str))

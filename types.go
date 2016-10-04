@@ -16,6 +16,7 @@ type Configs struct {
 
 type ChatMessage struct {
 	User      string   `json:"user"`
+	UUID      string   `json:"uuid"`
 	Timestamp int64    `json:"timestamp"`
 	Message   string   `json:"message"`
 	Type      string   `json:"type"`

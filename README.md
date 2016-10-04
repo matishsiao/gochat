@@ -7,8 +7,16 @@
 # Features
 
   Public channel chat
-  
-  Administrator support
+
+  Administrator support  
+
+## Support Command
+
+  1. /? // You can find help
+
+  2. /list // Get all online user list
+
+  3. /kick username // kick user(Administrator only)
 
 ## Todo
 
@@ -50,9 +58,9 @@
     </script>
   </html>
   ```
-  
+
   Administrator
-  
+
   ```
   <html>
     <link href="static/css/chat.css" rel="stylesheet">
@@ -77,21 +85,21 @@
   ```
   ./gochat
   ```
-  
+
   Browser
-  
+
     Normal User
-    
+
     ```
       http://127.0.0.1:8080/
     ```
-    
+
     Administrator
-    
+
     ```
       http://127.0.0.1:8080/admin.html
     ```
-    
+
 # Configuration
   ```
   {

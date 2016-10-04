@@ -4,6 +4,7 @@ Chat = function(container,user,token) {
   self.ws = null;
   self.hidden = false;
   self.user = user;
+  self.uuid = "";
   self.token = token;
   self.channel = "Public";
   var msgbox = document.getElementById(container);
@@ -20,6 +21,7 @@ Chat = function(container,user,token) {
         timestamp: new Date().getTime(),
         channel:channel,
         message:message,
+        uuid:self.uuid,
         token:self.token,
         data:{}
       };
@@ -118,6 +120,11 @@ Chat = function(container,user,token) {
       var msg = JSON.parse(event.data);
       if(msg != null){
         console.log("receive Message:",msg);
+        switch(msg.type){
+          case "login":
+            self.uuid = msg.data.args[0];
+          break;
+        }
         self.Add(msg);
       }
     }
