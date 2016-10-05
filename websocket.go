@@ -42,7 +42,7 @@ func Echo(ws *websocket.Conn) {
 	for {
 		var reply string
 		if err = websocket.Message.Receive(ws, &reply); err != nil {
-			log.Println("Can't receive:" + err.Error())
+			log.Printf("[%s]:leave chat. reason:%s\n", client.UserName, err.Error())
 			var leaveMsg ChatMessage
 			leaveMsg.Channel = "Public"
 			leaveMsg.Timestamp = time.Now().Unix() * 1000
@@ -61,17 +61,6 @@ func Echo(ws *websocket.Conn) {
 				websocket.Message.Send(ws, string(msg_str))
 			}
 		} else {
-			newChannel := true
-			for _, v := range client.Channel {
-				if v == msg.Channel {
-					newChannel = false
-					break
-				}
-			}
-			if newChannel {
-				client.Channel = append(client.Channel, msg.Channel)
-			}
-
 			switch msg.Type {
 			case "login":
 				//Send Login Message
@@ -83,7 +72,9 @@ func Echo(ws *websocket.Conn) {
 				welcomeMsg.User = "GoChat Service"
 				welcomeMsg.Type = "login"
 				welcomeMsg.Data.Command = "login"
-				welcomeMsg.Data.Args = append(welcomeMsg.Data.Args, encodeString(msg.User, 0))
+				client.UId = encodeString(msg.User, 0)
+				welcomeMsg.Data.Args = append(welcomeMsg.Data.Args, client.UId)
+
 				msg_str, _ := json.Marshal(welcomeMsg)
 				if string(msg_str) != "" {
 					websocket.Message.Send(ws, string(msg_str))
@@ -146,6 +137,48 @@ func processCommand(client *WsClient, msg ChatMessage) {
 				<label>Command List</label></br>
 				<b>/list</b>: get online user list
 			`
+	case "join":
+		if len(msg.Data.Args) == 2 {
+			newChannel := true
+			for _, v := range client.Channel {
+				if v == msg.Data.Args[1] {
+					newChannel = false
+					break
+				}
+			}
+			if newChannel {
+				client.Channel = append(client.Channel, msg.Data.Args[1])
+				cmdMsg.Channel = msg.Data.Args[1]
+				cmdMsg.Message = fmt.Sprintf("<b>%s</b> join %s channel.", msg.User, msg.Data.Args[1])
+				broadcast(client.UId, cmdMsg)
+			} else {
+				cmdMsg.Message = fmt.Sprintf("You join %s channel already.", msg.Data.Args[1])
+			}
+		} else {
+			cmdMsg.Message = "Args has empty."
+		}
+	case "leave":
+		if len(msg.Data.Args) == 2 {
+			for k, v := range client.Channel {
+				if v == msg.Data.Args[1] {
+					client.Channel = append(client.Channel[:0], client.Channel[k:]...)
+					break
+				}
+			}
+			cmdMsg.Channel = msg.Data.Args[1]
+			cmdMsg.Message = fmt.Sprintf("<b>%s</b> leave %s channel.", msg.User, msg.Data.Args[1])
+			broadcast(client.UId, cmdMsg)
+		} else {
+			cmdMsg.Message = "Args has empty."
+		}
+	case "channel":
+		cmdMsg.Message = "<p>Channel list</p>"
+		for e := clientList.Front(); e != nil; e = e.Next() {
+			if e.Value.(*WsClient).UId == client.UId {
+				channellist, _ := json.Marshal(e.Value.(*WsClient).Channel)
+				cmdMsg.Message += fmt.Sprintf("<b>%s</b> in Channel:%s</br>", e.Value.(*WsClient).UserName, channellist)
+			}
+		}
 	case "kick":
 		if process {
 			if len(msg.Data.Args) == 2 {
@@ -190,6 +223,18 @@ func broadcast(uid string, msg ChatMessage) {
 				if err = websocket.Message.Send(e.Value.(*WsClient).WS, string(msg_str)); err != nil {
 					log.Printf("WsSokect error:%s\n", err.Error())
 				}
+			}
+		}
+	}
+}
+
+func broadcastToAll(uid string, msg ChatMessage) {
+	var err error
+	msg_str, _ := json.Marshal(msg)
+	for e := clientList.Front(); e != nil; e = e.Next() {
+		if e.Value.(*WsClient).UId != uid {
+			if err = websocket.Message.Send(e.Value.(*WsClient).WS, string(msg_str)); err != nil {
+				log.Printf("WsSokect error:%s\n", err.Error())
 			}
 		}
 	}

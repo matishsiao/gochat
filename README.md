@@ -8,7 +8,9 @@
 
   Public channel chat
 
-  Administrator support  
+  Administrator support
+
+  Private channel chat
 
 ## Support Command
 
@@ -18,10 +20,12 @@
 
   3. /kick username // kick user(Administrator only)
 
-## Todo
+  4. /join "channel name" // join channel
 
-  Private channel chat
+  5. /leave "channel name" // leave channel
 
+  6. /change "channel name" // change used channel
+  
 # Screenshot
 
   Chat box

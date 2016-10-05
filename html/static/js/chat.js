@@ -7,6 +7,7 @@ Chat = function(container,user,token) {
   self.uuid = "";
   self.token = token;
   self.channel = "Public";
+  self.channelList = [];
   var msgbox = document.getElementById(container);
   if(msgbox == null){
     console.error("message box can't not be find.");
@@ -93,10 +94,11 @@ Chat = function(container,user,token) {
       msg.message = "XSS Injection. Auto block by goChat.";
     }
     msg_ctx = '<div class="message">'+
-               '<div class="message_title" style="'+((msg.user == self.user)?"background-color: #b0ff7b;":"background-color: #c6f104;")+'"><b>'+msg.user+'</b>:<label>';
+               '<div class="message_title" style="'+((msg.user == self.user)?"background-color: #b0ff7b;":"background-color: #c6f104;")+'"><b>'+msg.user+'</b>:';
                today = DateConverter(new Date().getTime());
                msgDay = DateConverter(msg.timestamp);
-    msg_ctx += ((today == msgDay)?"today":timeConverter(msg.timestamp))+'</label></div>'+
+    msg_ctx += '<b>['+ msg.channel +']</b>';
+    msg_ctx += '<label>'+((today == msgDay)?"today":timeConverter(msg.timestamp))+'</label></div>'+
                '<div class="message_content"><b>'+msg.message+'</div></div>';
     return msg_ctx;
   }
@@ -166,6 +168,33 @@ Chat = function(container,user,token) {
         data = msg.message.substr(1).split(" ");
         console.log(data);
         if(data.length > 0 && data[0] != ""){
+          switch(data[0]){
+            case "change":
+              self.channel = data[1];
+              send = false;
+            break;
+            case "join":
+              for(idx in self.channelList){
+                channel = self.channelList[idx];
+                if(channel == data[1]){
+                  find = true;
+                  break;
+                }
+              }
+              if(!find){
+                self.channelList.push(data[1]);
+              }
+            break;
+            case "leave":
+              for(idx in self.channelList){
+                channel = self.channelList[idx];
+                if(channel == data[1]){
+                  delete(self.channelList[idx]);
+                  break;
+                }
+              }
+            break;
+          }
           msg.type = "command";
           msg.data = {
             command:data[0],
