@@ -53,6 +53,11 @@
   padding: 4px;
 }
 
+.message_content ol {
+  padding-left: 10%;
+  margin-top: 0px;
+}
+
 .inputbox {
   font-size: 12px;
   padding: 4px;

@@ -90,6 +90,8 @@ func Echo(ws *websocket.Conn) {
 				processMessage(client, welcomeMsg)
 			case "message":
 				processMessage(client, msg)
+			case "direct":
+				processDirectMessage(msg)
 			case "command":
 				processCommand(client, msg)
 			}
@@ -97,6 +99,23 @@ func Echo(ws *websocket.Conn) {
 		}
 		if CONFIGS.Debug {
 			log.Println("Received back from client: " + reply)
+		}
+	}
+}
+
+func processDirectMessage(msg ChatMessage) {
+	switch msg.Data.Command {
+	case "direct":
+		if len(msg.Data.Args) > 0 {
+			for e := clientList.Front(); e != nil; e = e.Next() {
+				if e.Value.(*WsClient).UserName == msg.Data.Args[0] {
+					msg_str, _ := json.Marshal(msg)
+					if err := websocket.Message.Send(e.Value.(*WsClient).WS, string(msg_str)); err != nil {
+						log.Printf("WsSokect error:%s\n", err.Error())
+					}
+					break
+				}
+			}
 		}
 	}
 }
@@ -125,17 +144,55 @@ func processCommand(client *WsClient, msg ChatMessage) {
 
 	switch msg.Data.Command {
 	case "list":
-		cmdMsg.Message = "<p>User list</p>"
+		cmdMsg.Message = "<label>User list</label></br><ol>"
 		for e := clientList.Front(); e != nil; e = e.Next() {
 			if e.Value.(*WsClient).UId != client.UId {
-				channellist, _ := json.Marshal(e.Value.(*WsClient).Channel)
-				cmdMsg.Message += fmt.Sprintf("<b>%s</b> in Channel:%s</br>", e.Value.(*WsClient).UserName, channellist)
+				if process {
+					channellist := ""
+					for _, v := range e.Value.(*WsClient).Channel {
+						if channellist == "" {
+							channellist += v
+						} else {
+							channellist += "," + v
+						}
+
+					}
+					cmdMsg.Message += fmt.Sprintf("<li><b>%s</b>:%s</li>", e.Value.(*WsClient).UserName, channellist)
+				} else {
+					cmdMsg.Message += fmt.Sprintf("<li><b>%s</b></li>", e.Value.(*WsClient).UserName)
+				}
+
 			}
 		}
-	case "?":
+		cmdMsg.Message += "</ol>"
+	case "ver":
+		cmdMsg.Message = fmt.Sprintf("GoChat Version:%s</br>", version)
+	case "who":
+		if len(msg.Data.Args) == 2 {
+			find := false
+			for e := clientList.Front(); e != nil; e = e.Next() {
+				if e.Value.(*WsClient).UserName == msg.Data.Args[1] {
+					cmdMsg.Message = fmt.Sprintf("<b>%s</b> is online</br>", e.Value.(*WsClient).UserName)
+					find = true
+					break
+				}
+			}
+			if !find {
+				cmdMsg.Message = fmt.Sprintf("<b>%s</b> is offline</br>", msg.Data.Args[1])
+			}
+		} else {
+			cmdMsg.Message = "Args has incorrect."
+		}
+	case "?", "help":
 		cmdMsg.Message = `
 				<label>Command List</label></br>
-				<b>/list</b>: get online user list
+				<b>/list</b>: get online user list</br>
+				<b>/join channel</b>: join channel</br>
+				<b>/leave channel</b>: leave channel</br>
+				<b>/change channel</b>: change current channel to other channel</br>
+				<b>@username</b>: direct message to user</br>
+				<b>/ver</b>: get gochat version</br>
+				<b>/who</b>: check user status</br>
 			`
 	case "join":
 		if len(msg.Data.Args) == 2 {

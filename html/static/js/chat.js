@@ -94,10 +94,10 @@ Chat = function(container,user,token) {
       msg.message = "XSS Injection. Auto block by goChat.";
     }
     msg_ctx = '<div class="message">'+
-               '<div class="message_title" style="'+((msg.user == self.user)?"background-color: #b0ff7b;":"background-color: #c6f104;")+'"><b>'+msg.user+'</b>:';
+               '<div class="message_title" style="'+((msg.user == self.user)?"background-color: #b0ff7b;":"background-color: #c6f104;")+'"><b>'+msg.user+'</b>';
                today = DateConverter(new Date().getTime());
                msgDay = DateConverter(msg.timestamp);
-    msg_ctx += '<b>['+ msg.channel +']</b>';
+    msg_ctx += ' to <b>'+ msg.channel +'</b>';
     msg_ctx += '<label>'+((today == msgDay)?"today":timeConverter(msg.timestamp))+'</label></div>'+
                '<div class="message_content"><b>'+msg.message+'</div></div>';
     return msg_ctx;
@@ -164,9 +164,10 @@ Chat = function(container,user,token) {
     var msg = self.CreateMessage(self.channel, message);
     if(self.ws != null && self.ws.readyState == self.ws.OPEN) {
       var send = true;
-      if(msg.message.substr(0,1)=="/"){
+      var check = msg.message.substr(0,1);
+      switch (check) {
+        case "/":
         data = msg.message.substr(1).split(" ");
-        console.log(data);
         if(data.length > 0 && data[0] != ""){
           switch(data[0]){
             case "change":
@@ -204,6 +205,36 @@ Chat = function(container,user,token) {
           send = false;
           msg = self.CreateMessage(self.channel,"message can't send. reason:command format incorrect.");
         }
+          break;
+        case "@":
+        submsg = msg.message.substr(1);
+        data = submsg.split(" ");
+        console.log(data);
+        if(data.length > 0 && data[0] != ""){
+          var msgData = [];
+          msgData.push(data[0]);
+          delete(data[0]);
+          msgData.push("");
+          for(var i = 0;i < data.length;i++){
+            if(typeof(data[i]) != "undefined") {
+              if(msgData[1] == ""){
+                msgData[1] += data[i];
+              } else
+                msgData[1] +=" " +data[i];
+            }
+          }
+          msg.type = "direct";
+          msg.message = msgData[1];
+          msg.channel = msgData[0];
+          msg.data = {
+            command:"direct",
+            args:msgData
+          }
+        }
+
+        break;
+        default:
+
       }
       if(send)
         self.ws.send(JSON.stringify(msg));

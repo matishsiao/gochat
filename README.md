@@ -14,18 +14,24 @@
 
 ## Support Command
 
-  1. /? // You can find help
+  1. /? or /help // You can find help
 
   2. /list // Get all online user list
 
-  3. /kick username // kick user(Administrator only)
+  3. /kick "username" // kick user(Administrator only)
 
   4. /join "channel name" // join channel
 
   5. /leave "channel name" // leave channel
 
   6. /change "channel name" // change used channel
-  
+
+  7. /ver // get goChat version
+
+  8. /who "username" //check user status
+
+  9. @"username" "message"//send direct message to user
+
 # Screenshot
 
   Chat box
