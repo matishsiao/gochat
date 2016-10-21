@@ -1,6 +1,6 @@
 # gochat
 
-  GoChat is simplify web socket chat server with client.
+  GoChat is simplified web socket chat server with client.
 
 # Version: 0.0.1
 
